@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: main-postgres-svc
+  labels:
+    service: main-postgres
+spec:
+  selector:
+    service: main-postgres
+  type: ClusterIP
+  ports:
+  - port: 5432
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backup-postgres-svc
+  labels:
+    service: backup-postgres
+spec:
+  selector:
+    service: backup-postgres
+  type: ClusterIP
+  ports:
+  - port: 5432

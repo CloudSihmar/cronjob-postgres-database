@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backup-postgres
+  labels:
+    name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: backup-postgres
+  template:
+    metadata:
+      labels:
+        service: backup-postgres
+    spec:
+      containers:
+      - name: backup-postgres
+        image: postgres:14-alpine
+        volumeMounts:
+        - name: postgres-volume-mount
+          mountPath: /var/lib/postgresql/data
+          subPath: postgres
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+      restartPolicy: Always
+      volumes:
+      - name: postgres-volume-mount
+        persistentVolumeClaim:
+          claimName: psql2-pvc

@@ -1,0 +1,77 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: "*/1 * * * *" # Every 3 hr
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:          
+            app: backup
+        spec:
+          containers:
+            - name: update-backup
+              image: postgres:14-alpine
+              command: ["/bin/sh"]
+              args: ["-c", 'psql "postgresql://$POSTGRES_USERNAME:$POSTGRES_PASSWORD@main-postgres-svc.default.svc.cluster.local:5432/$POSTGRES_DATABASE" -f /var/lib/postgresql/backup4.sql']
+              env:
+                - name: POSTGRES_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: username
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: password
+                - name: POSTGRES_HOSTNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: hostname
+                - name: POSTGRES_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: database
+              volumeMounts:
+              - mountPath: "/var/lib/postgresql"
+                name: postgres-storage
+          initContainers:
+            - name: postgres-backup
+              image: postgres:14-alpine
+              command: ["/bin/bash"]
+              args: ["-c", 'pg_dump "postgresql://$POSTGRES_USERNAME:$POSTGRES_PASSWORD@backup-postgres-svc.default.svc.cluster.local:5432/$POSTGRES_DATABASE"  > /var/lib/postgresql/backup4.sql']
+              env:
+                - name: POSTGRES_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: username
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: password
+                - name: POSTGRES_HOSTNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: hostname
+                - name: POSTGRES_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: database
+              volumeMounts:
+              - mountPath: "/var/lib/postgresql"
+                name: postgres-storage
+          restartPolicy: OnFailure
+          volumes:
+          - name: postgres-storage
+            emptyDir: {} #store backup data temporarily on worker node. once cron completes it will get deleted.
+          
+            
