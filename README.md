@@ -1,6 +1,7 @@
 # cronjob-postgres-database
 
-Step1 : Apply secret, pv1, pv2, pvc1 and pvc2 yaml files
+Step1 : create directory /mnt/psql1 and /mnt/psql2 on each worker node 
+Apply secret, pv1, pv2, pvc1 and pvc2 yaml files
 
 Step 2: Apply main-postgress and backup-posgres yaml files
 
