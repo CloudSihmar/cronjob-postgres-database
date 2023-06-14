@@ -13,9 +13,9 @@ kubectl exec -it backup-postgres -- /bin/bash
 
 sql -U admin -d postgres
 
-CREATE TABLE employees1 ( id SERIAL PRIMARY KEY, name VARCHAR ( 100 ), age INTEGER, department VARCHAR (100));
+CREATE TABLE employees ( id SERIAL PRIMARY KEY, name VARCHAR ( 100 ), age INTEGER, department VARCHAR (100));
 
-INSERT INTO employees1 (name, age, department) VALUES ( 'Sandeep', 30, 'IT'),('Sam', 35, 'HR'),('Kavi', 35, 'Accounts'),('Aamir', 30, 'Devops');
+INSERT INTO employees (name, age, department) VALUES ( 'Sandeep', 30, 'IT'),('Sam', 35, 'HR'),('Kavi', 35, 'Accounts'),('Aamir', 30, 'Devops');
 
 # check the tables
 /dt   
