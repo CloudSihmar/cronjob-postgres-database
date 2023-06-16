@@ -11,7 +11,7 @@ Step 4 : access the backup database and create a table with some content.
 
 kubectl exec -it backup-postgres -- /bin/bash
 
-sql -U admin -d postgres
+psql -U admin -d postgres
 
 CREATE TABLE employees ( id SERIAL PRIMARY KEY, name VARCHAR ( 100 ), age INTEGER, department VARCHAR (100));
 
@@ -25,4 +25,6 @@ Step 5: Apply cron file to backup the data from backup-postgres and store it in 
 
 Step 6 : now check the main-postgres database if the data has been uploaded or not.
 
+psql -U admin -d postgres
+select * from employees;
 
