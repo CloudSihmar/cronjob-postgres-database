@@ -26,5 +26,6 @@ Step 5: Apply cron file to backup the data from backup-postgres and store it in 
 Step 6 : now check the main-postgres database if the data has been uploaded or not.
 
 psql -U admin -d postgres
+
 select * from employees;
 
